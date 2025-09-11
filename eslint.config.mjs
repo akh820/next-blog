@@ -1,6 +1,11 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { FlatCompat } from '@eslint/eslintrc';
+import js from '@eslint/js';
+import globals from 'globals';
+
+import someConfig from 'some-other-config-you-use';
+import eslintConfigPrettier from 'eslint-config-prettier';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -10,7 +15,21 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  js.configs.recommended,
+  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+    rules: {
+      // 여기에 추가적인 규칙을 설정
+      'no-unused-vars': 'warn',
+      'no-console': 'warn',
+    },
+  },
 ];
 
-export default eslintConfig;
+export default [someConfig, eslintConfigPrettier];
