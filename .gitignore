@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Claude Code files
+CLAUDE.md
+.claude/
+
+# gitignore itself
+.gitignore
