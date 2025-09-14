@@ -2,12 +2,12 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 
 const mockTags = [
-  { name: '전체', count: 20 },
-  { name: 'HTML', count: 10 },
-  { name: 'CSS', count: 5 },
-  { name: 'JavaScript', count: 3 },
-  { name: 'React', count: 3 },
-  { name: 'Next.js', count: 3 },
+  { id: 'all', name: '전체', count: 20 },
+  { id: 'html', name: 'HTML', count: 10 },
+  { id: 'css', name: 'CSS', count: 5 },
+  { id: 'javascript', name: 'JavaScript', count: 3 },
+  { id: 'react', name: 'React', count: 3 },
+  { id: 'nextjs', name: 'Next.js', count: 3 },
 ];
 
 export default function TagSection() {
