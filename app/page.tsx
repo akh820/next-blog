@@ -42,7 +42,7 @@ const mockPosts = [
 export default function Home() {
   return (
     <div className="container py-8">
-      <div className="grid grid-cols-[200px_1fr_220px] gap-6">
+      <div className="grid grid-cols-[220px_1fr_220px] gap-6">
         {/*좌측 사이드바 */}
         <aside>
           <TagSection />
