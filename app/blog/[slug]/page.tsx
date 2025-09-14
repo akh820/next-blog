@@ -11,9 +11,9 @@ interface PageProps {
 
 export default async function BlogPost({ params }: PageProps) {
   const { slug } = await params;
-  
+
   return (
-    <article className="container mx-auto px-4 py-12">
+    <article className="container py-12">
       {/* 블로그 헤더 */}
       <div className="space-y-4">
         <div className="space-y-2">

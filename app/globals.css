@@ -139,3 +139,10 @@ Tailwind CSS의 기본 레이어(@layer base)에서 모든 HTML 요소와 body�
     @apply bg-background text-foreground; /* 배경색과 텍스트 색상 기본값 설정 */
   }
 }
+
+@layer components {
+  .container {
+    @apply mx-auto max-w-6xl px-4;
+    width: 100%;
+  }
+}
