@@ -9,7 +9,7 @@ export const notion = new Client({
 });
 
 export const getPublishedPosts = async (): Promise<Post[]> => {
-  const response = await (notion.databases as any).query({
+  const response = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID!,
     filter: {
       property: 'Status',
