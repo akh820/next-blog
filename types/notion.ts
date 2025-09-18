@@ -9,7 +9,9 @@ export interface Post {
   title: string;
   description?: string;
   coverImage?: string;
-  tags?: TagFilterItem[];
+  tags?: string[];
   author?: string;
   date?: string;
+  modifiedDate?: string;
+  slug: string;
 }
