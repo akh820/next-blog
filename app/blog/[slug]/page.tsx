@@ -149,7 +149,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
               {/* <div className="flex items-center gap-1">
                  <Clock className="h-4 w-4" />
                  <span>5분 읽기</span>
-+              </div> */}
+              </div> */}
             </div>
           </div>
 
@@ -158,7 +158,8 @@ export default async function BlogPost({ params }: BlogPostProps) {
           {/* 블로그 본문 */}
           <div className="prose prose-slate dark:prose-invert max-w-none">
             <div className="prose prose-neutral prose-sm dark:prose-invert max-w-none">
-            <MDXRemote source={markdown} />
+              <MDXRemote source={markdown} />
+            </div>
           </div>
 
           <Separator className="my-16" />
