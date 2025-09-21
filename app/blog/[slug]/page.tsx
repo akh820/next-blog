@@ -7,6 +7,9 @@ import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/ca
 import { getPostBySlug } from '@/lib/notion';
 import { formatDate } from '@/lib/date';
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import rehypeHighlight from 'rehype-highlight';
 
 interface TableOfContentsItem {
   id: string;
@@ -156,10 +159,19 @@ export default async function BlogPost({ params }: BlogPostProps) {
           <Separator className="my-8" />
 
           {/* 블로그 본문 */}
-          <div className="prose prose-slate dark:prose-invert max-w-none">
-            <div className="prose prose-neutral prose-sm dark:prose-invert max-w-none">
-              <MDXRemote source={markdown} />
-            </div>
+          <div className="prose prose-neutral prose-sm dark:prose-invert max-w-none">
+            <MDXRemote
+              source={markdown}
+              options={{
+                mdxOptions: {
+                  remarkPlugins: [remarkGfm],
+                  rehypePlugins: [
+                    rehypeRaw,        // HTML 태그 처리
+                    rehypeHighlight,  // 코드 하이라이팅
+                  ],
+                },
+              }}
+            />
           </div>
 
           <Separator className="my-16" />

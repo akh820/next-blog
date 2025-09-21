@@ -152,3 +152,21 @@ Tailwind CSS의 기본 레이어(@layer base)에서 모든 HTML 요소와 body�
     width: 100%;
   }
 }
+
+/* Highlight.js 코드 하이라이팅 스타일 */
+@import 'highlight.js/styles/github-dark.css';
+
+/* 코드 블록 커스텀 스타일 */
+@layer components {
+  .prose pre {
+    @apply rounded-lg border bg-muted p-4 overflow-x-auto;
+  }
+
+  .prose code {
+    @apply bg-muted px-1.5 py-0.5 rounded text-sm;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0;
+  }
+}

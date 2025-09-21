@@ -1,5 +1,8 @@
 import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import rehypeHighlight from 'rehype-highlight';
 
 const nextConfig: NextConfig = {
   images: {
@@ -19,7 +22,13 @@ const nextConfig: NextConfig = {
 };
 
 const withMDX = createMDX({
-  // 필요한 마크다운 플러그인 추가하는 곳
+  options: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [
+      rehypeRaw,        // HTML 태그 처리
+      rehypeHighlight,  // 코드 하이라이팅
+    ],
+  },
 });
 
 export default withMDX(nextConfig);
