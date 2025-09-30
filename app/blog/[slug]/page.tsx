@@ -23,8 +23,6 @@ interface TocEntry {
   children?: Array<TocEntry>;
 }
 
-type Toc = Array<TocEntry>;
-
 function TableOfContentsLink({ item }: { item: TocEntry }) {
   return (
     <div className="space-y-2">
@@ -102,13 +100,13 @@ export default async function BlogPost({ params }: BlogPostProps) {
           <Separator className="my-8" />
 
           {/* 블로그 본문 */}
-          <div className="prose prose-neutral prose-sm dark:prose-invert prose-headings:scroll-mt-[var(--header-height)] max-w-none">
+          <div className="prose prose-neutral dark:prose-invert prose-headings:scroll-mt-[var(--header-height)] max-w-none">
             <MDXRemote
               source={markdown}
               options={{
                 mdxOptions: {
                   remarkPlugins: [remarkGfm],
-                  rehypePlugins: [rehypeSlug, rehypeSanitize, rehypePrettyCode],
+                  rehypePlugins: [withSlugs, rehypeSanitize, rehypePrettyCode],
                 },
               }}
             />
