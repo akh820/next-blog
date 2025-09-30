@@ -12,7 +12,6 @@ import rehypeSanitize from 'rehype-sanitize';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 import { compile } from '@mdx-js/mdx';
-import withSlugs from 'rehype-slug';
 import withToc from '@stefanprobst/rehype-extract-toc';
 import withTocExport from '@stefanprobst/rehype-extract-toc/mdx';
 
@@ -54,7 +53,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
 
   const { data } = await compile(markdown, {
     rehypePlugins: [
-      withSlugs,
+      rehypeSlug,
       rehypeSanitize,
       withToc,
       withTocExport,
@@ -106,7 +105,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
               options={{
                 mdxOptions: {
                   remarkPlugins: [remarkGfm],
-                  rehypePlugins: [withSlugs, rehypeSanitize, rehypePrettyCode],
+                  rehypePlugins: [rehypeSlug, rehypeSanitize, rehypePrettyCode],
                 },
               }}
             />

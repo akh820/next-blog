@@ -25,8 +25,8 @@ const withMDX = createMDX({
   options: {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [
-      rehypeRaw,        // HTML 태그 처리
-      rehypeHighlight,  // 코드 하이라이팅
+      // rehypeRaw,        // HTML 태그 처리
+      rehypeHighlight, // 코드 하이라이팅
     ],
   },
 });
