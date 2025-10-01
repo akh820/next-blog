@@ -1,10 +1,3 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { PostCard } from '@/components/features/blog/PostCard';
 import TagSection from '@/app/_components/TagSection';
 import ProfileSection from '@/app/_components/ProfileSection';
@@ -47,9 +40,9 @@ export default async function Home({ searchParams }: HomeProps) {
 
           {/* 블로그 카드 그리드 */}
           <div className="grid gap-4">
-            {posts.map((post) => (
+            {posts.map((post, index) => (
               <Link href={`/blog/${post.slug}`} key={post.id}>
-                <PostCard post={post} />
+                <PostCard post={post} isFirst={index === 0} />
               </Link>
             ))}
           </div>
