@@ -3,8 +3,6 @@ import createMDX from '@next/mdx';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 
-console.log('현재 환경: ', process.env.NODE_ENV);
-
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
