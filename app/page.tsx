@@ -3,7 +3,6 @@ import ProfileSection from '@/app/_components/ProfileSection';
 import ContactSection from '@/app/_components/ContactSection';
 import { getTags } from '@/lib/notion';
 import HeaderSection from '@/app/_components/HeaderSection';
-import PostList from '@/components/features/blog/PostList';
 import { Suspense } from 'react';
 import PostListSuspense from '@/components/features/blog/PostListSuspense';
 import TagSectionClient from './_components/TagSection.client';
