@@ -91,6 +91,9 @@ export const getPostBySlug = async (
 };
 
 export const getPublishedPosts = async (tag?: string, sort?: string): Promise<Post[]> => {
+  //개발환경 테스트 딜레이 5초 추가
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   const response = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID!,
     filter: {
