@@ -109,8 +109,6 @@ export const getPublishedPosts = async ({
   pageSize = 2,
   startCursor,
 }: GetPublishedPostsParams = {}): Promise<GetPublishedPostsResponse> => {
-  await new Promise((resolve) => setTimeout(resolve, 5000));
-
   const response = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE_ID!,
     filter: {
