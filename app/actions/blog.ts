@@ -1,6 +1,9 @@
 'use server';
 
 import { createPost } from '@/lib/notion';
+import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
 const postSchema = z.object({
@@ -23,6 +26,7 @@ export interface PostFormState {
     content?: string[];
   };
   formData?: PostFormData;
+  success?: boolean;
 }
 export async function createPostAction(prevState: PostFormState, formData: FormData) {
   // const title = formData.get('title') as string;
@@ -54,8 +58,9 @@ export async function createPostAction(prevState: PostFormState, formData: FormD
       tag: tag,
       content: content,
     });
-
+    revalidateTag('posts');
     return {
+      success: true,
       message: '블로그 포스트가 성공적으로 생성되었습니다.',
     };
   } catch (err) {
