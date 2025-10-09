@@ -10,7 +10,6 @@ import { unstable_cache } from 'next/cache';
 export const notion = new Client({
   auth: process.env.NOTION_TOKEN,
 });
-
 const n2m = new NotionToMarkdown({ notionClient: notion });
 
 function getPostMetadata(page: PageObjectResponse): Post {
@@ -91,7 +90,6 @@ export const getPostBySlug = async (
   // return getPageMetadata(response);
 };
 
-// notion API props
 export interface GetPublishedPostsParams {
   tag?: string;
   sort?: string;
@@ -111,6 +109,7 @@ export const getPublishedPosts = unstable_cache(
     pageSize = 2,
     startCursor,
   }: GetPublishedPostsParams = {}): Promise<GetPublishedPostsResponse> => {
+    console.log('getPublishedPosts: ', tag, sort, pageSize, startCursor);
     const response = await notion.databases.query({
       database_id: process.env.NOTION_DATABASE_ID!,
       filter: {
@@ -146,6 +145,8 @@ export const getPublishedPosts = unstable_cache(
     const posts = response.results
       .filter((page): page is PageObjectResponse => 'properties' in page)
       .map(getPostMetadata);
+
+    console.log('posts: ', posts);
 
     return {
       posts,

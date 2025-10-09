@@ -9,10 +9,9 @@ import { Loader2 } from 'lucide-react';
 import { useActionState } from 'react';
 import { createPostAction } from '@/app/actions/blog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
 export function PostForm() {
   const queryClient = useQueryClient();
   const router = useRouter();
