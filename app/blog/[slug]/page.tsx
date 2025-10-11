@@ -14,7 +14,7 @@ import rehypeSlug from 'rehype-slug';
 import { compile } from '@mdx-js/mdx';
 import withToc from '@stefanprobst/rehype-extract-toc';
 import withTocExport from '@stefanprobst/rehype-extract-toc/mdx';
-import GiscusComments from '@/components/GiscursComments';
+import GiscusComments from '@/components/GiscusComments';
 
 interface TocEntry {
   value: string;

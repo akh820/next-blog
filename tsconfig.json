@@ -27,7 +27,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/mdx-page/page.mdx"
+    "app/mdx-page/page.mdx",
+    "components/theme/ThemeToggle.tsx"
   ],
   "exclude": ["node_modules"]
 }
