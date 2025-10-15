@@ -16,8 +16,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: `Hong's blog`,
-  description: 'Next.js, React, TypeScript, TailwindCSS, Vercel',
+  title: {
+    template: '%s | Memento Vitae',
+    default: 'Memento Vitae',
+  },
+  description: '개인의 경험을 기록하는 블로그',
+  keywords: ['Next.js', '프론트엔드', '웹개발', '코딩', '프로그래밍', '리액트'],
+  authors: [{ name: 'hongTale', url: 'https://github.com/akh820' }],
+  creator: '',
+  publisher: 'hongTale',
+  formatDetection: {
+    email: false,
+    telephone: false,
+    address: false,
+  },
+  metadataBase: new URL('https://next-blog-angyehongs-projects.vercel.app/'),
+  alternates: {
+    canonical: '/',
+  },
 };
 
 export default function RootLayout({
