@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: `Hong's blog`,
-  description: 'Next.js, React, TypeScript, TailwindCss, Vercel',
+  description: 'Next.js, React, TypeScript, TailwindCSS, Vercel',
 };
 
 export default function RootLayout({

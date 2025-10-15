@@ -3,7 +3,7 @@ interface Post {
   title: string;
 }
 
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic';
 
 export const revalidate = 3600; // 페이지를 1시간마다 재검증
 
