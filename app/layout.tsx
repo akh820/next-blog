@@ -30,10 +30,14 @@ export const metadata: Metadata = {
     telephone: false,
     address: false,
   },
-  metadataBase: new URL('https://next-blog-angyehongs-projects.vercel.app/'),
+  metadataBase: new URL(`${process.env.NEXT_PUBLIC_SITE_URL}`),
   alternates: {
     canonical: '/',
   },
+  // 구글 번역 비활성화
+  // other: {
+  //   google: 'notranslate',
+  // },
 };
 
 export default function RootLayout({

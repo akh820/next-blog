@@ -161,7 +161,8 @@ export const getPublishedPosts = unstable_cache(
       nextCursor: response.next_cursor,
     };
   },
-  ['posts'],
+  // 캐시 키 수정
+  undefined,
   {
     tags: ['posts'],
   }
