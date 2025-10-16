@@ -1,3 +1,4 @@
+import { ProfileImage } from '@/components/ProfileImage';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Youtube, Github, BookOpen, Instagram } from 'lucide-react';
@@ -30,13 +31,7 @@ export default function ProfileSection() {
           <div className="jusity-center flex">
             <div className="bg-muted rounded-full p-2">
               <div className="h-36 w-36 overflow-hidden rounded-full">
-                <Image
-                  src="/images/favicon.PNG"
-                  alt="Hong"
-                  width={144}
-                  height={144}
-                  className="object-cover"
-                />
+                <ProfileImage />
               </div>
             </div>
           </div>
