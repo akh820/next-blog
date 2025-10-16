@@ -32,7 +32,7 @@ export default function OgImage() {
             fontWeight: 'bold',
           }}
         >
-          짐코딩 블로그
+          HongTale
         </div>
         <div
           style={{
@@ -42,7 +42,7 @@ export default function OgImage() {
             color: '#cccccc',
           }}
         >
-          프론트엔드 개발과 관련된 다양한 지식과 경험을 공유하는 블로그입니다.
+          개발과 관련된 다양한 지식과 경험을 공유하는 블로그입니다.
         </div>
       </div>
     ),
