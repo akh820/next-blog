@@ -47,7 +47,7 @@ export default async function Home({ searchParams }: HomeProps) {
         {/* 우측 사이드바 */}
         <aside className="order-1 flex flex-col gap-6 md:order-none">
           <ProfileSection />
-          <ContactSection />
+          {/* <ContactSection /> */}
         </aside>
       </div>
     </div>

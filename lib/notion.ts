@@ -59,42 +59,68 @@ export const getPostBySlug = async (
   markdown: string;
   post: Post | null;
 }> => {
-  const response = await notion.databases.query({
-    database_id: process.env.NOTION_DATABASE_ID!,
-    filter: {
-      and: [
-        {
-          property: 'Slug',
-          rich_text: {
-            equals: slug,
-          },
-        },
-        {
-          property: 'Status',
-          select: {
-            equals: 'Published',
-          },
-        },
-      ],
-    },
-  });
+  // UUID 형식인지 확인 (Notion 페이지 ID는 하이픈 포함 UUID 형식)
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
 
-  if (!response.results[0]) {
+  let page: PageObjectResponse | null = null;
+
+  if (isUUID) {
+    // 페이지 ID로 직접 조회
+    try {
+      const response = await notion.pages.retrieve({ page_id: slug });
+      if ('properties' in response) {
+        // Status가 Published인지 확인
+        const properties = response.properties;
+        const status = properties.Status;
+        if (status.type === 'select' && status.select?.name === 'Published') {
+          page = response as PageObjectResponse;
+        }
+      }
+    } catch (error) {
+      // 페이지를 찾을 수 없거나 접근 권한이 없는 경우
+      console.error('Failed to retrieve page by ID:', error);
+    }
+  } else {
+    // Slug로 데이터베이스 쿼리
+    const response = await notion.databases.query({
+      database_id: process.env.NOTION_DATABASE_ID!,
+      filter: {
+        and: [
+          {
+            property: 'Slug',
+            rich_text: {
+              equals: slug,
+            },
+          },
+          {
+            property: 'Status',
+            select: {
+              equals: 'Published',
+            },
+          },
+        ],
+      },
+    });
+
+    if (response.results[0] && 'properties' in response.results[0]) {
+      page = response.results[0] as PageObjectResponse;
+    }
+  }
+
+  if (!page) {
     return {
       markdown: '',
       post: null,
     };
   }
 
-  const mdBlocks = await n2m.pageToMarkdown(response.results[0].id);
+  const mdBlocks = await n2m.pageToMarkdown(page.id);
   const { parent } = n2m.toMarkdownString(mdBlocks);
 
   return {
     markdown: parent,
-    post: getPostMetadata(response.results[0] as PageObjectResponse),
+    post: getPostMetadata(page),
   };
-
-  // return getPageMetadata(response);
 };
 
 export interface GetPublishedPostsParams {
@@ -116,7 +142,6 @@ export const getPublishedPosts = unstable_cache(
     pageSize = 2,
     startCursor,
   }: GetPublishedPostsParams = {}): Promise<GetPublishedPostsResponse> => {
-    console.log('getPublishedPosts: ', tag, sort, pageSize, startCursor);
     const response = await notion.databases.query({
       database_id: process.env.NOTION_DATABASE_ID!,
       filter: {
@@ -152,8 +177,6 @@ export const getPublishedPosts = unstable_cache(
     const posts = response.results
       .filter((page): page is PageObjectResponse => 'properties' in page)
       .map(getPostMetadata);
-
-    console.log('posts: ', posts);
 
     return {
       posts,

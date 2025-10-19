@@ -8,19 +8,19 @@ export default function Header() {
         <div className="grid w-full grid-cols-3 items-center">
           <div className="flex items-center justify-start">
             <Link href="/" className="text-xl font-semibold">
-              <span className="font-bold">Memento Vitae</span>
+              <span className="font-bold">GyeHong's Atlas</span>
             </Link>
           </div>
           <nav className="flex items-center justify-center gap-4">
-            <Link href="/" className="hover:text-primary font-medium">
-              홈
-            </Link>
+            {/* <Link href="/" className="hover:text-primary font-medium">
+              Home
+            </Link> */}
             <Link href="/blog" className="hover:text-primary font-medium">
-              블로그
+              Blog
             </Link>
-            <Link href="/about" className="hover:text-primary font-medium">
-              소개
-            </Link>
+            {/* <Link href="/about" className="hover:text-primary font-medium">
+              about
+            </Link> */}
           </nav>
 
           <div className="flex items-center justify-end gap-2">
