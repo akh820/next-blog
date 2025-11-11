@@ -121,13 +121,11 @@ export default async function BlogPost({ params }: BlogPostProps) {
         <aside className="hidden md:block">{/* 추후 콘텐츠 추가 */}</aside>
         <section>
           {/* 블로그 헤더 */}
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex gap-2">
-                {post.tags?.map((tag) => (
-                  <Badge key={tag}>{tag}</Badge>
-                ))}
-              </div>
+          <div className="mb-8 space-y-4">
+            <div className="flex gap-2">
+              {post.tags?.map((tag) => (
+                <Badge key={tag}>{tag}</Badge>
+              ))}
             </div>
 
             {/* 메타 정보 */}
@@ -143,22 +141,8 @@ export default async function BlogPost({ params }: BlogPostProps) {
             </div>
           </div>
 
-          <Separator className="my-8" />
-
-          {/* 모바일 전용 목차 */}
-          <div className="sticky top-[var(--sticky-top)] mb-6 md:hidden">
-            <details className="bg-muted/60 rounded-lg p-4 backdrop-blur-sm">
-              <summary className="cursor-pointer text-lg font-semibold">목차</summary>
-              <nav className="mt-3 space-y-3 text-sm">
-                {data?.toc?.map((item) => (
-                  <TableOfContentsLink key={item.id} item={item} />
-                ))}
-              </nav>
-            </details>
-          </div>
-
-          {/* 블로그 본문 - 클라이언트 컴포넌트로 언어별 처리 */}
-          <ClientPostContent slug={slug} initialPost={post} initialMarkdown={markdown} />
+          {/* 블로그 본문 - 클라이언트 컴포넌트로 언어별 처리 (제목 및 목차 포함) */}
+          <ClientPostContent postId={post.id} initialPost={post} initialMarkdown={markdown} />
 
           <Separator className="my-16" />
 

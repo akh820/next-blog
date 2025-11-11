@@ -132,7 +132,7 @@ function extractTranslatableText(markdown: string): {
     return `[${text}](${urlPlaceholder})`;
   });
 
-  // 5. HTML 태그 보호
+  // 5. HTML 태그만 보호 (태그 안의 텍스트는 번역되도록)
   protectedText = protectedText.replace(/<[^>]+>/g, (match) => createPlaceholder(match));
 
   return { text: protectedText, placeholders };
@@ -145,7 +145,26 @@ function restoreProtectedContent(
 ): string {
   let restored = translatedText;
   placeholders.forEach((original, placeholder) => {
-    restored = restored.replace(new RegExp(placeholder, 'g'), original);
+    // Placeholder가 번역되어 변형된 경우를 처리
+    // 예: __PLACEHOLDER_0__ -> PLACEHOLDER_0__, __placeholder_0__ 등
+    const variations = [
+      placeholder, // 원본
+      placeholder.replace('__PLACEHOLDER_', '__placeholder_'), // 소문자
+      placeholder.replace('__PLACEHOLDER_', 'PLACEHOLDER_'), // 앞 __ 제거
+      placeholder.replace('__PLACEHOLDER_', 'placeholder_'), // 앞 __ 제거 + 소문자
+      placeholder.replace('__', ''), // 모든 __ 제거
+      placeholder.replace(/_/g, '\\_'), // 이스케이프된 언더스코어
+      placeholder.replace(/_/g, ' '), // 언더스코어가 공백으로 변경
+      // 일본어 번역에서 발생할 수 있는 변형
+      placeholder.replace('__PLACEHOLDER_', 'プレースホルダー_'),
+      placeholder.replace('__PLACEHOLDER_', 'プレースホルダ_'),
+    ];
+
+    variations.forEach((variant) => {
+      // 정규식 특수문자 이스케이프
+      const escapedVariant = variant.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      restored = restored.replace(new RegExp(escapedVariant, 'g'), original);
+    });
   });
   return restored;
 }

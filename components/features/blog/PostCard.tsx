@@ -8,6 +8,8 @@ import { Calendar, User } from 'lucide-react';
 import Image from 'next/image';
 import { Post } from '@/types/blog';
 import { formatDate } from '@/lib/date';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useState, useEffect } from 'react';
 
 interface PostCardProps {
   post: Post;
@@ -15,6 +17,42 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, isFirst = false }: PostCardProps) {
+  const { language } = useLanguage();
+  const [translatedPost, setTranslatedPost] = useState(post);
+
+  useEffect(() => {
+    // 한국어면 원본 사용
+    if (language === 'ko') {
+      setTranslatedPost(post);
+      return;
+    }
+
+    // 다른 언어면 번역 파일에서 로드
+    const loadTranslation = async () => {
+      try {
+        const response = await fetch(`/content/translations/translations.json`);
+        if (response.ok) {
+          const translations = await response.json();
+          const translated = translations[post.id]?.[language];
+
+          if (translated) {
+            setTranslatedPost({
+              ...post,
+              title: translated.title,
+              description: translated.description,
+            });
+          } else {
+            setTranslatedPost(post);
+          }
+        }
+      } catch (error) {
+        // 에러 시 원본 사용
+        setTranslatedPost(post);
+      }
+    };
+
+    loadTranslation();
+  }, [language, post]);
   return (
     <Card className="group bg-card/50 hover:border-primary/20 overflow-hidden border backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
       {post.coverImage && (
@@ -43,11 +81,11 @@ export function PostCard({ post, isFirst = false }: PostCardProps) {
           ))}
         </div>
         <h2 className="group-hover:text-primary mb-2 text-xl font-bold tracking-tight transition-colors">
-          {post.title}
+          {translatedPost.title}
         </h2>
-        {post.description && (
+        {translatedPost.description && (
           <p className="text-muted-foreground mt-2 line-clamp-2 leading-relaxed">
-            {post.description}
+            {translatedPost.description}
           </p>
         )}
         <div className="text-muted-foreground mt-6 flex items-center gap-x-4 text-sm">

@@ -1,46 +1,71 @@
 'use client';
 
-import { useLanguage } from '@/contexts/LanguageContext';
-
-import { useTranslation } from '@/hooks/useTranslation';
-
-import { MDXRemote } from 'next-mdx-remote/rsc';
-
+import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import type { Components } from 'react-markdown';
 
-import rehypeSanitize from 'rehype-sanitize';
-
-import rehypePrettyCode from 'rehype-pretty-code';
-
-import withSlugs from 'rehype-slug';
+interface TocItem {
+  id: string;
+  text: string;
+  level: number;
+}
 
 interface TranslatedContentProps {
   markdown: string;
+  toc?: TocItem[];
 }
 
 export default function TranslatedContent({ markdown }: TranslatedContentProps) {
-  const { language } = useLanguage();
-
-  const { translatedText, isLoading } = useTranslation(markdown, language);
+  // 헤딩에 ID 추가하는 커스텀 컴포넌트
+  const components: Components = {
+    h1: ({ children, ...props }) => {
+      const text = String(children);
+      const id = text
+        .toLowerCase()
+        .replace(/[^a-z0-9가-힣\s-]/g, '')
+        .replace(/\s+/g, '-');
+      return (
+        <h1 id={id} {...props}>
+          {children}
+        </h1>
+      );
+    },
+    h2: ({ children, ...props }) => {
+      const text = String(children);
+      const id = text
+        .toLowerCase()
+        .replace(/[^a-z0-9가-힣\s-]/g, '')
+        .replace(/\s+/g, '-');
+      return (
+        <h2 id={id} {...props}>
+          {children}
+        </h2>
+      );
+    },
+    h3: ({ children, ...props }) => {
+      const text = String(children);
+      const id = text
+        .toLowerCase()
+        .replace(/[^a-z0-9가-힣\s-]/g, '')
+        .replace(/\s+/g, '-');
+      return (
+        <h3 id={id} {...props}>
+          {children}
+        </h3>
+      );
+    },
+  };
 
   return (
     <div className="prose prose-neutral dark:prose-invert prose-headings:scroll-mt-[var(--header-height)] max-w-none">
-      {isLoading ? (
-        <div className="opacity-50">
-          <p>번역 중...</p>
-        </div>
-      ) : (
-        <MDXRemote
-          source={translatedText}
-          options={{
-            mdxOptions: {
-              remarkPlugins: [remarkGfm],
-
-              rehypePlugins: [withSlugs, rehypeSanitize, rehypePrettyCode],
-            },
-          }}
-        />
-      )}
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
+        components={components}
+      >
+        {markdown}
+      </ReactMarkdown>
     </div>
   );
 }
