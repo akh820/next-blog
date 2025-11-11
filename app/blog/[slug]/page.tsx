@@ -61,13 +61,8 @@ interface TocEntry {
   children?: Array<TocEntry>;
 }
 
-export const generateStaticParams = async () => {
-  const { posts } = await getPublishedPosts();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-};
-
+// Docker 빌드 시 환경 변수가 없어서 에러 발생 으로 인해 , ISR 로변경
+export const dynamic = 'force-dynamic';
 export const revalidate = 60;
 function TableOfContentsLink({ item }: { item: TocEntry }) {
   return (

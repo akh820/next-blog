@@ -4,9 +4,6 @@ import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import globals from 'globals';
 
-import someConfig from 'some-other-config-you-use';
-import eslintConfigPrettier from 'eslint-config-prettier';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -32,4 +29,4 @@ const eslintConfig = [
   },
 ];
 
-export default [someConfig, eslintConfigPrettier];
+export default eslintConfig;
