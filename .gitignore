@@ -44,5 +44,8 @@ next-env.d.ts
 CLAUDE.md
 .claude/
 
+# Translation cache (generated at build time)
+content/translations/
+
 # gitignore itself
 .gitignore

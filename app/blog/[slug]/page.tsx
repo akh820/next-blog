@@ -21,9 +21,7 @@ import { notFound } from 'next/navigation';
 
 import { Metadata } from 'next';
 
-import TranslatedTitle from '@/components/blog/TranslatedTitle';
-
-import TranslatedContent from '@/components/blog/TranslatedContent';
+import ClientPostContent from '@/components/blog/ClientPostContent';
 
 // 동적 메타데이터 생성
 export async function generateMetadata({
@@ -130,7 +128,6 @@ export default async function BlogPost({ params }: BlogPostProps) {
                   <Badge key={tag}>{tag}</Badge>
                 ))}
               </div>
-              <TranslatedTitle title={post.title} />
             </div>
 
             {/* 메타 정보 */}
@@ -160,8 +157,8 @@ export default async function BlogPost({ params }: BlogPostProps) {
             </details>
           </div>
 
-          {/* 블로그 본문 */}
-          <TranslatedContent markdown={markdown} />
+          {/* 블로그 본문 - 클라이언트 컴포넌트로 언어별 처리 */}
+          <ClientPostContent slug={slug} initialPost={post} initialMarkdown={markdown} />
 
           <Separator className="my-16" />
 

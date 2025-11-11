@@ -5,7 +5,9 @@
   "scripts": {
     "dev:turbopack": "next dev --turbopack",
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run translate && next build",
+    "build:only": "next build",
+    "translate": "tsx scripts/translate-posts.ts",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -63,6 +65,7 @@
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "tw-animate-css": "^1.3.8",
     "typescript": "^5"
   }

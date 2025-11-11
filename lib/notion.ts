@@ -54,7 +54,8 @@ function getPostMetadata(page: PageObjectResponse): Post {
 }
 
 export const getPostBySlug = async (
-  slug: string
+  slug: string,
+  lang: string = 'ko'
 ): Promise<{
   markdown: string;
   post: Post | null;
@@ -114,12 +115,45 @@ export const getPostBySlug = async (
     };
   }
 
+  const postMetadata = getPostMetadata(page);
+
+  // 한국어가 아닌 경우, 번역 파일에서 로드
+  if (lang !== 'ko') {
+    try {
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const translationsPath = path.join(
+        process.cwd(),
+        'content',
+        'translations',
+        'translations.json'
+      );
+      const translationsContent = await fs.readFile(translationsPath, 'utf-8');
+      const translations = JSON.parse(translationsContent);
+
+      const translatedPost = translations[postMetadata.slug]?.[lang];
+      if (translatedPost) {
+        return {
+          markdown: translatedPost.markdown,
+          post: {
+            ...postMetadata,
+            title: translatedPost.title,
+            description: translatedPost.description,
+          },
+        };
+      }
+    } catch (error) {
+      console.warn(`Translation not found for ${slug} in ${lang}, falling back to Korean`);
+    }
+  }
+
+  // 한국어 또는 번역이 없는 경우 원본 반환
   const mdBlocks = await n2m.pageToMarkdown(page.id);
   const { parent } = n2m.toMarkdownString(mdBlocks);
 
   return {
     markdown: parent,
-    post: getPostMetadata(page),
+    post: postMetadata,
   };
 };
 
