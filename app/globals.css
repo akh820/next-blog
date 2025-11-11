@@ -169,4 +169,13 @@ Tailwind CSS의 기본 레이어(@layer base)에서 모든 HTML 요소와 body�
   .prose pre code {
     @apply bg-transparent p-0;
   }
+
+  /* details/summary 스타일 - 일본어 온점 문제 해결 */
+  details summary {
+    @apply list-none;
+  }
+
+  details summary::-webkit-details-marker {
+    @apply hidden;
+  }
 }

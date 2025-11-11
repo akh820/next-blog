@@ -21,9 +21,10 @@ export default function TranslatedContent({ markdown }: TranslatedContentProps) 
   const components: Components = {
     h1: ({ children, ...props }) => {
       const text = String(children);
+      // 일본어 히라가나(ぁ-ん), 카타카나(ァ-ヶ), 한자(一-龯)도 포함
       const id = text
         .toLowerCase()
-        .replace(/[^a-z0-9가-힣\s-]/g, '')
+        .replace(/[^a-z0-9가-힣ぁ-んァ-ヶ一-龯\s-]/g, '')
         .replace(/\s+/g, '-');
       return (
         <h1 id={id} {...props}>
@@ -33,9 +34,10 @@ export default function TranslatedContent({ markdown }: TranslatedContentProps) 
     },
     h2: ({ children, ...props }) => {
       const text = String(children);
+      // 일본어 히라가나(ぁ-ん), 카타카나(ァ-ヶ), 한자(一-龯)도 포함
       const id = text
         .toLowerCase()
-        .replace(/[^a-z0-9가-힣\s-]/g, '')
+        .replace(/[^a-z0-9가-힣ぁ-んァ-ヶ一-龯\s-]/g, '')
         .replace(/\s+/g, '-');
       return (
         <h2 id={id} {...props}>
@@ -45,9 +47,10 @@ export default function TranslatedContent({ markdown }: TranslatedContentProps) 
     },
     h3: ({ children, ...props }) => {
       const text = String(children);
+      // 일본어 히라가나(ぁ-ん), 카타카나(ァ-ヶ), 한자(一-龯)도 포함
       const id = text
         .toLowerCase()
-        .replace(/[^a-z0-9가-힣\s-]/g, '')
+        .replace(/[^a-z0-9가-힣ぁ-んァ-ヶ一-龯\s-]/g, '')
         .replace(/\s+/g, '-');
       return (
         <h3 id={id} {...props}>
