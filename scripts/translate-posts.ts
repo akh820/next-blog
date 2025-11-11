@@ -132,7 +132,13 @@ function extractTranslatableText(markdown: string): {
     return `[${text}](${urlPlaceholder})`;
   });
 
-  // 5. HTML 태그만 보호 (태그 안의 텍스트는 번역되도록)
+  // 5. HTML 블록 전체 보호 (<details>, <summary> 등)
+  // details 태그 전체를 하나의 블록으로 보호
+  protectedText = protectedText.replace(/<details[\s\S]*?<\/details>/gi, (match) =>
+    createPlaceholder(match)
+  );
+
+  // 6. 나머지 HTML 태그만 보호 (태그 안의 텍스트는 번역되도록)
   protectedText = protectedText.replace(/<[^>]+>/g, (match) => createPlaceholder(match));
 
   return { text: protectedText, placeholders };

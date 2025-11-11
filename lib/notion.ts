@@ -171,7 +171,7 @@ export interface GetPublishedPostsResponse {
 
 export const getPublishedPosts = unstable_cache(
   async ({
-    tag = '전체',
+    tag = 'All',
     sort = 'latest',
     pageSize = 2,
     startCursor,
@@ -186,7 +186,7 @@ export const getPublishedPosts = unstable_cache(
               equals: 'Published',
             },
           },
-          ...(tag && tag !== '전체'
+          ...(tag && tag !== 'All'
             ? [
                 {
                   property: 'Tags',
@@ -246,14 +246,14 @@ export const getTags = async (): Promise<TagFilterItem[]> => {
     count,
   }));
 
-  // "전체" 태그 추가
+  // "All" 태그 추가
   tags.unshift({
     id: 'all',
-    name: '전체',
+    name: 'All',
     count: posts.length,
   });
 
-  // 태그 이름 기준으로 정렬 ("전체" 태그는 항상 첫 번째에 위치하도록 제외)
+  // 태그 이름 기준으로 정렬 ("All" 태그는 항상 첫 번째에 위치하도록 제외)
   const [allTag, ...restTags] = tags;
   const sortedTags = restTags.sort((a, b) => a.name.localeCompare(b.name));
 

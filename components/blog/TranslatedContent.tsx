@@ -65,7 +65,14 @@ export default function TranslatedContent({ markdown }: TranslatedContentProps) 
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}
-        components={components}
+        components={{
+          ...components,
+          // 이미지 컴포넌트 명시적 처리
+          img: ({ src, alt, ...props }) => {
+            // eslint-disable-next-line @next/next/no-img-element
+            return <img src={src} alt={alt || ''} {...props} loading="lazy" />;
+          },
+        }}
       >
         {markdown}
       </ReactMarkdown>

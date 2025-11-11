@@ -1,5 +1,4 @@
 import ProfileSection from '@/app/_components/ProfileSection';
-import ContactSection from '@/app/_components/ContactSection';
 import { getTags, getPublishedPosts } from '@/lib/notion';
 import HeaderSection from '@/app/_components/HeaderSection';
 import PostListSuspense from '@/components/features/blog/PostListSuspense';
@@ -22,7 +21,7 @@ export const metadata: Metadata = {
 
 export default async function Home({ searchParams }: HomeProps) {
   const { tag, sort } = await searchParams;
-  const selectedTag = tag || '전체';
+  const selectedTag = tag || 'All';
   const selectedSort = sort || 'latest';
 
   const tags = getTags();

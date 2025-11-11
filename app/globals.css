@@ -170,12 +170,17 @@ Tailwind CSS의 기본 레이어(@layer base)에서 모든 HTML 요소와 body�
     @apply bg-transparent p-0;
   }
 
-  /* details/summary 스타일 - 일본어 온점 문제 해결 */
-  details summary {
-    @apply list-none;
+  /* details/summary 스타일 - 화살표 표시 */
+  .prose details {
+    @apply my-4;
   }
 
-  details summary::-webkit-details-marker {
-    @apply hidden;
+  .prose details summary {
+    @apply cursor-pointer font-semibold;
+    /* 기본 브라우저 화살표 표시 - list-style 유지 */
+  }
+
+  .prose details[open] summary {
+    @apply mb-2;
   }
 }
