@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
+import LanguageSelector from '@/components/LanguageSelector';
+
 export default function Header() {
   return (
     <header className="bg-background sticky top-0 z-50 border-b">
@@ -11,19 +13,27 @@ export default function Header() {
               <span className="font-bold">GyeHong's Atlas</span>
             </Link>
           </div>
+
           <nav className="flex items-center justify-center gap-4">
             {/* <Link href="/" className="hover:text-primary font-medium">
+
               Home
+
             </Link> */}
+
             <Link href="/blog" className="hover:text-primary font-medium">
               Blog
             </Link>
+
             {/* <Link href="/about" className="hover:text-primary font-medium">
+
               about
+
             </Link> */}
           </nav>
 
           <div className="flex items-center justify-end gap-2">
+            <LanguageSelector />
             <ThemeToggle />
             {/* <Button asChild size="sm" className="gap-2">
               <Link href="/blog/write">글쓰기</Link>
