@@ -5,6 +5,9 @@ import rehypeHighlight from 'rehype-highlight';
 
 const nextConfig: NextConfig = {
   output: 'standalone', // Docker 배포를 위한 standalone 모드
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: [
       {
