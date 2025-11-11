@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import LanguageSelector from '@/components/LanguageSelector';
 
@@ -10,7 +9,7 @@ export default function Header() {
         <div className="grid w-full grid-cols-3 items-center">
           <div className="flex items-center justify-start">
             <Link href="/" className="text-xl font-semibold">
-              <span className="font-bold">GyeHong's Atlas</span>
+              <span className="font-bold">GyeHong&apos;s Atlas</span>
             </Link>
           </div>
 

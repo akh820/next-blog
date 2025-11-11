@@ -2,19 +2,28 @@ import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { CalendarDays, User } from 'lucide-react';
-import { getPostBySlug, getPublishedPosts } from '@/lib/notion';
+
+import { getPostBySlug } from '@/lib/notion';
+
 import { formatDate } from '@/lib/date';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import remarkGfm from 'remark-gfm';
-import rehypeSanitize from 'rehype-sanitize';
-import rehypePrettyCode from 'rehype-pretty-code';
+
 import { compile } from '@mdx-js/mdx';
+
 import withSlugs from 'rehype-slug';
+
 import withToc from '@stefanprobst/rehype-extract-toc';
+
 import withTocExport from '@stefanprobst/rehype-extract-toc/mdx';
+
 import GiscusComments from '@/components/GiscusComments';
+
 import { notFound } from 'next/navigation';
+
 import { Metadata } from 'next';
+
+import TranslatedTitle from '@/components/blog/TranslatedTitle';
+
+import TranslatedContent from '@/components/blog/TranslatedContent';
 
 // 동적 메타데이터 생성
 export async function generateMetadata({
@@ -100,7 +109,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
   const { data } = await compile(markdown, {
     rehypePlugins: [
       withSlugs,
-      rehypeSanitize,
+      // rehypeSanitize,
       withToc,
       withTocExport,
       /** Optionally, provide a custom name for the export. */
@@ -121,7 +130,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                   <Badge key={tag}>{tag}</Badge>
                 ))}
               </div>
-              <h1 className="text-3xl font-bold md:text-4xl">{post.title}</h1>
+              <TranslatedTitle title={post.title} />
             </div>
 
             {/* 메타 정보 */}
@@ -152,17 +161,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
           </div>
 
           {/* 블로그 본문 */}
-          <div className="prose prose-neutral dark:prose-invert prose-headings:scroll-mt-[var(--header-height)] max-w-none">
-            <MDXRemote
-              source={markdown}
-              options={{
-                mdxOptions: {
-                  remarkPlugins: [remarkGfm],
-                  rehypePlugins: [withSlugs, rehypeSanitize, rehypePrettyCode],
-                },
-              }}
-            />
-          </div>
+          <TranslatedContent markdown={markdown} />
 
           <Separator className="my-16" />
 

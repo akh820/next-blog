@@ -1,8 +1,15 @@
 'use client';
 import Giscus from '@giscus/react';
 import { useTheme } from 'next-themes';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+import { GISCUS_LANG_MAP } from '@/lib/types/language';
+
 export default function GiscusComments() {
   const { theme } = useTheme();
+
+  const { language } = useLanguage();
+
   return (
     <Giscus
       repo="gymcoding/notion-blog-nextjs-giscus"
@@ -15,7 +22,7 @@ export default function GiscusComments() {
       emitMetadata="0"
       inputPosition="top"
       theme={theme === 'dark' ? 'dark' : 'light'}
-      lang="ko"
+      lang={GISCUS_LANG_MAP[language]}
     />
   );
 }
