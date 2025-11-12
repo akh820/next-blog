@@ -17,14 +17,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Memento Vitae',
-    default: 'Memento Vitae',
+    template: "GyeHong's Atlas",
+    default: "GyeHong's Atlas",
   },
   description: '개인의 경험을 기록하는 블로그',
-  keywords: ['Next.js', '프론트엔드', '웹개발', '코딩', '프로그래밍', '리액트'],
-  authors: [{ name: 'hongTale', url: 'https://github.com/akh820' }],
+  keywords: ['프론트엔드', '백엔드', '웹개발', '코딩', '프로그래밍', '리액트'],
+  authors: [{ name: 'GyeHong', url: 'https://github.com/akh820' }],
   creator: '',
-  publisher: 'hongTale',
+  publisher: 'GyeHong',
   formatDetection: {
     email: false,
     telephone: false,
