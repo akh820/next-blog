@@ -21,9 +21,16 @@ ENV NOTION_DATABASE_ID=${NOTION_DATABASE_ID}
 ENV DEEPL_API_KEY=${DEEPL_API_KEY}
 ENV NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Create .env.production file from build args
+RUN echo "NOTION_TOKEN=${NOTION_TOKEN}" > .env.production && \
+    echo "NOTION_DATABASE_ID=${NOTION_DATABASE_ID}" >> .env.production && \
+    echo "DEEPL_API_KEY=${DEEPL_API_KEY}" >> .env.production && \
+    echo "NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}" >> .env.production
 
 RUN npm run build
 

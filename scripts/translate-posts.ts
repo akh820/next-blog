@@ -10,8 +10,11 @@ import fs from 'fs/promises';
 import path from 'path';
 import { config } from 'dotenv';
 
-// .env.local 파일 로드
-config({ path: path.join(process.cwd(), '.env.local') });
+// .env 파일 로드 (.env.production 우선, 없으면 .env.local)
+const envPath = process.env.NODE_ENV === 'production'
+  ? path.join(process.cwd(), '.env.production')
+  : path.join(process.cwd(), '.env.local');
+config({ path: envPath });
 
 const notion = new Client({
   auth: process.env.NOTION_TOKEN,
