@@ -89,13 +89,40 @@ export default function ClientPostContent({
           if (!isMounted) return;
 
           if (translatedPost) {
+            // 번역된 마크다운에서 만료된 Notion 이미지 URL을 원본의 최신 URL로 교체
+            let updatedMarkdown = translatedPost.markdown;
+            const originalMarkdown = initialMarkdownRef.current;
+
+            // 원본 마크다운에서 모든 이미지 URL 추출
+            const originalImageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+            const originalImages: { alt: string; url: string }[] = [];
+            let match;
+
+            while ((match = originalImageRegex.exec(originalMarkdown)) !== null) {
+              originalImages.push({ alt: match[1], url: match[2] });
+            }
+
+            // 번역된 마크다운의 이미지 URL을 원본의 최신 URL로 교체
+            originalImages.forEach((img) => {
+              // 이미지 alt 텍스트를 기준으로 URL 교체 (alt는 보통 같음)
+              const escapedAlt = img.alt.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+              const translatedImageRegex = new RegExp(
+                `!\\[${escapedAlt}\\]\\([^)]+\\)`,
+                'g'
+              );
+              updatedMarkdown = updatedMarkdown.replace(
+                translatedImageRegex,
+                `![${img.alt}](${img.url})`
+              );
+            });
+
             setPost({
               ...initialPostRef.current,
               title: translatedPost.title,
               description: translatedPost.description,
             });
-            setMarkdown(translatedPost.markdown);
-            setToc(extractTocFromMarkdown(translatedPost.markdown));
+            setMarkdown(updatedMarkdown);
+            setToc(extractTocFromMarkdown(updatedMarkdown));
           } else {
             // 번역이 없으면 원본 사용
             setPost(initialPostRef.current);
