@@ -158,16 +158,49 @@ Tailwind CSS의 기본 레이어(@layer base)에서 모든 HTML 요소와 body�
 
 /* 코드 블록 커스텀 스타일 */
 @layer components {
-  .prose pre {
-    @apply rounded-lg border bg-muted p-4 overflow-x-auto;
+  /* 인라인 코드 스타일 */
+  .prose code {
+    @apply bg-muted/70 px-1.5 py-0.5 rounded text-sm font-mono text-foreground border border-border/50;
   }
 
-  .prose code {
-    @apply bg-muted px-1.5 py-0.5 rounded text-sm;
+  /* 코드 블록 스타일 (CodeBlock 컴포넌트 사용) */
+  .prose pre {
+    @apply rounded-lg overflow-hidden my-0;
+    max-width: 100%;
+    overflow-x: auto;
   }
 
   .prose pre code {
-    @apply bg-transparent p-0;
+    @apply bg-transparent p-0 border-0 text-sm font-mono leading-relaxed;
+    color: #e6edf3; /* GitHub dark 색상 */
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
+
+  /* 코드 블록 내 특정 요소 스타일 */
+  .prose pre code .hljs-comment,
+  .prose pre code .hljs-quote {
+    color: #8b949e;
+  }
+
+  .prose pre code .hljs-keyword,
+  .prose pre code .hljs-selector-tag {
+    color: #ff7b72;
+  }
+
+  .prose pre code .hljs-string,
+  .prose pre code .hljs-attr {
+    color: #a5d6ff;
+  }
+
+  .prose pre code .hljs-number,
+  .prose pre code .hljs-literal {
+    color: #79c0ff;
+  }
+
+  .prose pre code .hljs-function,
+  .prose pre code .hljs-title {
+    color: #d2a8ff;
   }
 
   /* details/summary 스타일 - 화살표 표시 */
@@ -182,5 +215,12 @@ Tailwind CSS의 기본 레이어(@layer base)에서 모든 HTML 요소와 body�
 
   .prose details[open] summary {
     @apply mb-2;
+  }
+
+  /* 이미지 크기 제한 */
+  .prose img {
+    @apply max-w-full h-auto rounded-lg;
+    max-height: 600px;
+    object-fit: contain;
   }
 }

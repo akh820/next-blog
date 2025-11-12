@@ -9,6 +9,7 @@ import type { Post } from '@/types/blog';
 import fs from 'fs/promises';
 import path from 'path';
 import { config } from 'dotenv';
+import crypto from 'crypto';
 
 // .env 파일 로드 (.env.production 우선, 없으면 .env.local)
 const envPath = process.env.NODE_ENV === 'production'
@@ -94,6 +95,74 @@ const DEEPL_LANG_MAP: Record<Language, string> = {
   ja: 'JA',
 };
 
+// 이미지 다운로드 및 저장 함수
+async function downloadImage(url: string, postSlug: string): Promise<string> {
+  try {
+    // 이미지 파일명 생성 (URL 해시 + 확장자)
+    const hash = crypto.createHash('md5').update(url).digest('hex').substring(0, 12);
+
+    // URL에서 파일 확장자 추출
+    let extension = path.extname(new URL(url).pathname).split('?')[0] || '.png';
+    const filename = `${postSlug}-${hash}${extension}`;
+
+    // public/images/posts/ 디렉토리 확인
+    const publicDir = path.join(process.cwd(), 'public', 'images', 'posts');
+    await fs.mkdir(publicDir, { recursive: true });
+
+    const filepath = path.join(publicDir, filename);
+    const publicUrl = `/images/posts/${filename}`;
+
+    // 이미 파일이 존재하면 다운로드 스킵
+    try {
+      await fs.access(filepath);
+      return publicUrl; // 파일 존재, URL만 반환
+    } catch {
+      // 파일 없음, 다운로드 진행
+    }
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      return url; // 실패 시 원본 URL
+    }
+
+    const buffer = await response.arrayBuffer();
+    await fs.writeFile(filepath, new Uint8Array(buffer));
+
+    return publicUrl;
+  } catch (error) {
+    return url; // 실패 시 원본 URL 반환
+  }
+}
+
+// 마크다운 내의 모든 Notion 이미지 URL을 로컬 이미지로 변환
+async function downloadMarkdownImages(markdown: string, postSlug: string): Promise<string> {
+  let processedMarkdown = markdown;
+
+  // Notion 이미지 URL 패턴 찾기
+  const notionImageRegex = /!\[([^\]]*)\]\((https:\/\/prod-files-secure\.s3[^)]+)\)/g;
+  const matches = Array.from(markdown.matchAll(notionImageRegex));
+
+  // Notion URL이 없으면 바로 반환
+  if (matches.length === 0) {
+    return processedMarkdown;
+  }
+
+  for (const match of matches) {
+    const [fullMatch, altText, imageUrl] = match;
+
+    // 이미지 다운로드 (이미 존재하면 URL만 반환)
+    const localUrl = await downloadImage(imageUrl, postSlug);
+
+    // Notion URL인 경우에만 교체 (로컬 URL이면 이미 변환됨)
+    if (localUrl.startsWith('/images/posts/')) {
+      const newImageMarkdown = `![${altText}](${localUrl})`;
+      processedMarkdown = processedMarkdown.replace(fullMatch, newImageMarkdown);
+    }
+  }
+
+  return processedMarkdown;
+}
+
 interface TranslatedContent {
   [slug: string]: {
     [lang: string]: {
@@ -113,30 +182,29 @@ function extractTranslatableText(markdown: string): {
   let index = 0;
 
   const createPlaceholder = (content: string): string => {
-    const placeholder = `__PLACEHOLDER_${index++}__`;
+    const placeholder = `<x id="${index++}"/>`;
     placeholders.set(placeholder, content);
     return placeholder;
   };
 
-  // 1. 코드 블록 보호 (```...```)
+  // 1. 코드 블록 보호 (```...```) - 가장 먼저 처리
   let protectedText = markdown.replace(/```[\s\S]*?```/g, (match) => createPlaceholder(match));
 
   // 2. 인라인 코드 보호 (`...`)
-  protectedText = protectedText.replace(/`[^`]+`/g, (match) => createPlaceholder(match));
+  protectedText = protectedText.replace(/`[^`\n]+`/g, (match) => createPlaceholder(match));
 
   // 3. 이미지 보호 (![alt](url))
   protectedText = protectedText.replace(/!\[([^\]]*)\]\([^)]+\)/g, (match) =>
     createPlaceholder(match)
   );
 
-  // 4. 링크 URL 보호하되 텍스트는 번역 ([text](url) -> [text](__PLACEHOLDER__))
+  // 4. 링크 URL 보호하되 텍스트는 번역 ([text](url) -> [text](<x id="N"/>))
   protectedText = protectedText.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, url) => {
     const urlPlaceholder = createPlaceholder(url);
     return `[${text}](${urlPlaceholder})`;
   });
 
   // 5. HTML 블록 전체 보호 (<details>, <summary> 등)
-  // details 태그 전체를 하나의 블록으로 보호
   protectedText = protectedText.replace(/<details[\s\S]*?<\/details>/gi, (match) =>
     createPlaceholder(match)
   );
@@ -153,28 +221,17 @@ function restoreProtectedContent(
   placeholders: Map<string, string>
 ): string {
   let restored = translatedText;
-  placeholders.forEach((original, placeholder) => {
-    // Placeholder가 번역되어 변형된 경우를 처리
-    // 예: __PLACEHOLDER_0__ -> PLACEHOLDER_0__, __placeholder_0__ 등
-    const variations = [
-      placeholder, // 원본
-      placeholder.replace('__PLACEHOLDER_', '__placeholder_'), // 소문자
-      placeholder.replace('__PLACEHOLDER_', 'PLACEHOLDER_'), // 앞 __ 제거
-      placeholder.replace('__PLACEHOLDER_', 'placeholder_'), // 앞 __ 제거 + 소문자
-      placeholder.replace('__', ''), // 모든 __ 제거
-      placeholder.replace(/_/g, '\\_'), // 이스케이프된 언더스코어
-      placeholder.replace(/_/g, ' '), // 언더스코어가 공백으로 변경
-      // 일본어 번역에서 발생할 수 있는 변형
-      placeholder.replace('__PLACEHOLDER_', 'プレースホルダー_'),
-      placeholder.replace('__PLACEHOLDER_', 'プレースホルダ_'),
-    ];
 
-    variations.forEach((variant) => {
-      // 정규식 특수문자 이스케이프
-      const escapedVariant = variant.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      restored = restored.replace(new RegExp(escapedVariant, 'g'), original);
-    });
-  });
+  // Placeholder를 역순으로 복원
+  const entries = Array.from(placeholders.entries()).reverse();
+
+  for (const [placeholder, original] of entries) {
+    // 정규식 특수문자 이스케이프
+    const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escapedPlaceholder, 'g');
+    restored = restored.replace(regex, original);
+  }
+
   return restored;
 }
 
@@ -198,8 +255,9 @@ async function translateText(text: string, targetLang: Language): Promise<string
     body: new URLSearchParams({
       text,
       target_lang: targetLangCode,
-      tag_handling: 'xml', // XML 태그 형식 유지
-      preserve_formatting: '1', // 포맷 유지
+      tag_handling: 'xml',
+      ignore_tags: 'x',
+      preserve_formatting: '1',
     }),
   });
 
@@ -249,12 +307,20 @@ async function translatePosts() {
       translatedContent[post.slug] = {};
     }
 
-    // Notion에서 마크다운 가져오기
-    const mdBlocks = await n2m.pageToMarkdown(post.id);
-    const { parent: markdown } = n2m.toMarkdownString(mdBlocks);
+    let markdown: string;
 
-    // 한국어 원본 저장
-    if (!translatedContent[post.slug].ko) {
+    // 한국어 원본이 이미 있으면 재사용, 없으면 Notion에서 가져오기
+    if (translatedContent[post.slug].ko?.markdown) {
+      markdown = translatedContent[post.slug].ko.markdown;
+    } else {
+      // Notion에서 마크다운 가져오기
+      const mdBlocks = await n2m.pageToMarkdown(post.id);
+      const { parent: rawMarkdown } = n2m.toMarkdownString(mdBlocks);
+
+      // Notion 이미지를 로컬로 다운로드 (이미 있으면 스킵)
+      markdown = await downloadMarkdownImages(rawMarkdown, post.slug);
+
+      // 한국어 원본 저장
       translatedContent[post.slug].ko = {
         title: post.title,
         description: post.description || '',

@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import type { Components } from 'react-markdown';
+import CodeBlock from './CodeBlock';
 
 interface TocItem {
   id: string;
@@ -58,10 +59,22 @@ export default function TranslatedContent({ markdown }: TranslatedContentProps) 
         </h3>
       );
     },
+    code: ({ className, children, node }) => {
+      const codeString = String(children).replace(/\n$/, '');
+      // 인라인 코드 판단: node.position이 한 줄이거나, className이 없고 개행이 없는 경우
+      const hasNewline = String(children).includes('\n');
+      const inline = !hasNewline && !className?.startsWith('language-');
+
+      return (
+        <CodeBlock inline={inline} className={className}>
+          {codeString}
+        </CodeBlock>
+      );
+    },
   };
 
   return (
-    <div className="prose prose-neutral dark:prose-invert prose-headings:scroll-mt-[var(--header-height)] max-w-none">
+    <div className="prose prose-neutral dark:prose-invert prose-headings:scroll-mt-[var(--header-height)] max-w-none break-words">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}
