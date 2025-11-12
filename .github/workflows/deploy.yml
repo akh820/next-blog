@@ -1,0 +1,77 @@
+name: Deploy to Personal Server
+
+on:
+  push:
+    branches:
+      - main # main 브랜치에 푸시할 때만 배포
+  workflow_dispatch: # 수동 실행도 가능
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # 환경변수 파일 생성 (한 번에)
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env.production
+
+      # 의존성 설치 및 번역 실행
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run translation
+        run: |
+          export $(cat .env.production | xargs)
+          npm run translate
+
+      # 번역 파일을 아티팩트로 저장
+      - name: Upload translation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: translations
+          path: |
+            content/translations/
+            public/content/translations/
+
+      # Docker 이미지 빌드 및 서버에 배포
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            set -e
+
+            # 프로젝트 디렉토리로 이동
+            cd ~/next-blog || { echo "Project directory not found"; exit 1; }
+
+            # 최신 코드 가져오기
+            git fetch origin
+            git reset --hard origin/main
+
+            # 번역 파일 다운로드 (GitHub Actions에서 업로드된 것 사용)
+            # 또는 서버에서 직접 번역 실행
+
+            # 환경변수 파일 생성
+            echo "${{ secrets.ENV_FILE }}" > .env.production
+
+            # Docker Compose로 재배포
+            docker-compose down
+            docker-compose build --no-cache
+            docker-compose up -d
+
+            # 사용하지 않는 이미지 정리
+            docker image prune -f
+
+            echo "Deployment completed successfully!"

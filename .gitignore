@@ -47,5 +47,12 @@ CLAUDE.md
 # Translation cache (generated at build time)
 content/translations/
 
-# gitignore itself
-.gitignore
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+
+# Backup files
+*.backup
+backups/
